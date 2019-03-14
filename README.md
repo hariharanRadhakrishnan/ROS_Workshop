@@ -6,3 +6,6 @@ https://drive.google.com/file/d/11adYzDoIjl2UM2qSLllkiJP5QuMC4rjr/view?usp=shari
 
 # VM installation instruction:
 https://docs.google.com/document/d/1E8sO7Cg4Y0qdWMWaVgxO1cuxhyuIWLF0uaWf7LnW9Hc/edit?usp=sharing
+
+# V-REP and ROS Integration Steps/Procedure
+https://docs.google.com/document/d/1OSI0D8kBTAHzTjIxOhH_GeVPU_yDWNNX4yQciu2Ib4M/edit?usp=sharing
