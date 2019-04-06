@@ -16,5 +16,5 @@ http://wiki.ros.org/ROS/Installation
 ### ROS Documentation
 http://wiki.ros.org
 
-###ss V-REP
+### V-REP
 http://www.coppeliarobotics.com/
