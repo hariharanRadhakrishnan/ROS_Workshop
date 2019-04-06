@@ -1,0 +1,290 @@
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin_make
+source devel/setup.bash
+
+catkin_make install
+
+echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+
+roscore
+
+rosnode list
+ 
+rosnode info /rosout
+ 
+ rosrun [package_name] [node_name]
+ 
+rosrun turtlesim turtlesim_node
+rosnode list
+ 
+
+
+rosrun turtlesim turtle_teleop_key
+
+rosrun rqt_graph rqt_graph
+
+rostopic -h
+rostopic echo [topic]
+rostopic echo /turtle1/cmd_vel
+
+
+
+
+rostopic list -v 
+
+
+rostopic type
+
+ 
+ 
+ rostopic type /turtle1/cmd_vel
+ 
+ 
+ rosmsg
+
+ 
+ rosmsg show geometry_msgs/Twist
+
+ 
+ rostopic pub -1 /turtle1/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'
+ 
+ rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -r 1 -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, -1.8]'
+ 
+ 
+ rosservice
+ 
+ rosservice list
+ 
+ rosservice type /clear
+
+
+
+ rosservice call /clear
+ 
+ 
+ rosparam list
+ rosparam set [param_name]
+rosparam get [param_name]
+
+
+	
+	
+
+
+catkin_create_pkg beginner_tutorials std_msgs rospy roscpp
+
+
+	
+	
+roscd beginner_tutorials
+mkdir msg
+echo "int64 num" > msg/Num.msg
+
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+  
+  CMakeLists.txt
+  
+  
+  find_package(catkin REQUIRED COMPONENTS
+   roscpp
+   rospy
+   std_msgs
+   message_generation
+)
+
+catkin_package(
+  ...
+  CATKIN_DEPENDS message_runtime ...
+  ...)
+  
+  add_message_files(
+  FILES
+  Num.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
+rosmsg show [message type]
+rosmsg show beginner_tutorials/Num
+rosmsg show Num
+
+roscd beginner_tutorials
+mkdir srv
+
+roscp [package_name] [file_to_copy_path] [copy_path]
+roscp rospy_tutorials AddTwoInts.srv srv/AddTwoInts.srv
+
+we can copy a service from the rospy_tutorials package
+
+
+add_service_files(
+  FILES
+  AddTwoInts.srv
+)
+
+rossrv show <service type>
+rossrv show beginner_tutorials/AddTwoInts
+rossrv show AddTwoInts
+
+roscd beginner_tutorials
+mkdir scripts
+cd scripts
+
+
+
+#!/usr/bin/env python
+# license removed for brevity
+import rospy
+from std_msgs.msg import String
+
+def talker():
+    pub = rospy.Publisher('chatter', String, queue_size=10)
+    rospy.init_node('talker', anonymous=True)
+    rate = rospy.Rate(10) # 10hz
+    while not rospy.is_shutdown():
+        hello_str = "hello world %s" % rospy.get_time()
+        rospy.loginfo(hello_str)
+        pub.publish(hello_str)
+        rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        talker()
+    except rospy.ROSInterruptException:
+        pass
+		
+		
+chmod +x talker.py
+
+#!/usr/bin/env python
+import rospy
+from std_msgs.msg import String
+
+def callback(data):
+    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+    
+def listener():
+
+    # In ROS, nodes are uniquely named. If two nodes with the same
+    # name are launched, the previous one is kicked off. The
+    # anonymous=True flag means that rospy will choose a unique
+    # name for our 'listener' node so that multiple listeners can
+    # run simultaneously.
+    rospy.init_node('listener', anonymous=True)
+
+    rospy.Subscriber("chatter", String, callback)
+
+    # spin() simply keeps python from exiting until this node is stopped
+    rospy.spin()
+
+if __name__ == '__main__':
+    listener()
+
+chmod +x listener.py
+
+cd ~/catkin_ws
+catkin_make
+
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin_make
+source devel/setup.bash
+
+
+
+
+cd ~/catkin_ws
+catkin_make
+source ./devel/setup.bash
+rosrun beginner_tutorials talker.py 
+rosrun beginner_tutorials listener.py
+
+
+Writing a Service Node
+#!/usr/bin/env python
+from beginner_tutorials.srv import *
+import rospy
+
+def handle_add_two_ints(req):
+    print "Returning [%s + %s = %s]"%(req.a, req.b, (req.a + req.b))
+    return AddTwoIntsResponse(req.a + req.b)
+
+def add_two_ints_server():
+    rospy.init_node('add_two_ints_server')
+    s = rospy.Service('add_two_ints', AddTwoInts, handle_add_two_ints)
+    print "Ready to add two ints."
+    rospy.spin()
+
+if __name__ == "__main__":
+    add_two_ints_server()
+	
+	
+	chmod +x scripts/add_two_ints_server.py
+	
+	
+	
+	
+#!/usr/bin/env python
+
+import sys
+import rospy
+from beginner_tutorials.srv import *
+
+def add_two_ints_client(x, y):
+    rospy.wait_for_service('add_two_ints')
+    try:
+        add_two_ints = rospy.ServiceProxy('add_two_ints', AddTwoInts)
+        resp1 = add_two_ints(x, y)
+        return resp1.sum
+    except rospy.ServiceException, e:
+        print "Service call failed: %s"%e
+
+def usage():
+    return "%s [x y]"%sys.argv[0]
+
+if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        x = int(sys.argv[1])
+        y = int(sys.argv[2])
+    else:
+        print usage()
+        sys.exit(1)
+    print "Requesting %s+%s"%(x, y)
+    print "%s + %s = %s"%(x, y, add_two_ints_client(x, y))
+	
+chmod +x scripts/add_two_ints_client.py
+
+
+
+
+rosrun beginner_tutorials add_two_ints_server.py
+rosrun beginner_tutorials add_two_ints_client.py 1 3 
+
+
+roslaunch [package] [filename.launch]
+roscd beginner_tutorials
+mkdir launch
+cd launch
+
+<launch>
+
+  <group ns="publishlisten">
+    <node pkg="beginner_tutorials" name="talker" type="talker.py"/>
+	<node pkg="beginner_tutorials" name="listener" type="listener.py"/>
+  </group>
+
+</launch>
+
+
+sudo rosdep init
+rosdep update
+
+
+
+
