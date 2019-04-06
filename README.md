@@ -2,10 +2,10 @@
 Repo containing VM images, Documents for the tutorials etc
 
 # VM Image in available at:
-https://drive.google.com/file/d/11adYzDoIjl2UM2qSLllkiJP5QuMC4rjr/view?usp=sharing
+https://drive.google.com/open?id=1dWfmPPUpdx7zLMsfTpbHRLL2htDNZFwB
 
 # VM installation instruction:
-https://docs.google.com/document/d/1E8sO7Cg4Y0qdWMWaVgxO1cuxhyuIWLF0uaWf7LnW9Hc/edit?usp=sharing
+https://drive.google.com/open?id=1t7KesroeWQXgurIrKRfRnmHSJFvEd4v8Tr9TibSbn9U
 
 # V-REP and ROS Integration Steps/Procedure
-https://docs.google.com/document/d/1OSI0D8kBTAHzTjIxOhH_GeVPU_yDWNNX4yQciu2Ib4M/edit?usp=sharing
+https://drive.google.com/open?id=11iZRoOPjBs-4Bu9fNkeaQDolxC2JYf5PJAt5aSw-KUM
